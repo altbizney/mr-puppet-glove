@@ -17,35 +17,56 @@ This is the perfect script for integration that need to avoid data loose.
 If you need speed and low latency take a look to wrmhlReadLatest.
 */
 
-public class wrmhlRead : MonoBehaviour {
+public class wrmhlRead : MonoBehaviour
+{
 
-	wrmhl myDevice = new wrmhl(); // wrmhl is the bridge beetwen your computer and hardware.
+    wrmhl myDevice = new wrmhl(); // wrmhl is the bridge beetwen your computer and hardware.
 
-	[Tooltip("SerialPort of your device.")]
-	public string portName = "COM3";
+    [Tooltip("SerialPort of your device.")]
+    public string portName = "COM3";
 
-	[Tooltip("Baudrate")]
-	public int baudRate = 250000;
+    [Tooltip("Match with Arduino Baudrate")]
+    public int baudRate = 250000;
 
 
-	[Tooltip("Timeout")]
-	public int ReadTimeout = 20;
+    [Tooltip("Make slightly higher than Arduino update frequency")]
+    public int ReadTimeout = 205;
 
-	[Tooltip("QueueLenght")]
-	public int QueueLength = 1;
+    public int QueueLength = 1;
 
-	void Start () {
-		myDevice.set (portName, baudRate, ReadTimeout, QueueLength); // This method set the communication with the following vars;
-		//                              Serial Port, Baud Rates, Read Timeout and QueueLenght.
-		myDevice.connect (); // This method open the Serial communication with the vars previously given.
-	}
+    public Transform proxy;
 
-	// Update is called once per frame
-	void Update () {
-		print (myDevice.readQueue () ); // myDevice.read() return the data coming from the device using thread.
-	}
+    private string _data;
+    private string[] _array;
 
-	void OnApplicationQuit() { // close the Thread and Serial Port
-		myDevice.close();
-	}
+    void Start()
+    {
+        myDevice.set(portName, baudRate, ReadTimeout, QueueLength);
+        myDevice.connect();
+    }
+
+    void Update()
+    {
+        _data = myDevice.readQueue();
+
+        if (_data != null)
+        {
+            _array = _data.Split(',');
+
+            if (_array.Length == 4)
+            {
+                proxy.rotation = new Quaternion(
+                    float.Parse(_array[0]),
+                    float.Parse(_array[1]),
+                    float.Parse(_array[2]),
+                    float.Parse(_array[3])
+                );
+            }
+        }
+    }
+
+    void OnApplicationQuit()
+    {
+        myDevice.close();
+    }
 }
