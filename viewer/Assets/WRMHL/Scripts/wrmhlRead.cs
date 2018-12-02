@@ -34,7 +34,12 @@ public class wrmhlRead : MonoBehaviour
 
     public int QueueLength = 1;
 
-    public Transform proxy;
+    private float flex = 0.0f;
+    public float flexMin = 9200.0f;
+    public float flexMax = 35000.0f;
+
+    public Transform root;
+    public Transform joint;
 
     private string _data;
     private string[] _array;
@@ -53,14 +58,20 @@ public class wrmhlRead : MonoBehaviour
         {
             _array = _data.Split(',');
 
-            if (_array.Length == 4)
+            if (_array.Length >= 4)
             {
-                proxy.rotation = new Quaternion(
+                root.rotation = new Quaternion(
                     float.Parse(_array[0]),
                     float.Parse(_array[1]),
                     float.Parse(_array[2]),
                     float.Parse(_array[3])
                 );
+            }
+
+            if (_array.Length == 5)
+            {
+                flex = Mathf.InverseLerp(flexMin, flexMax, float.Parse(_array[4]));
+                joint.localEulerAngles = new Vector3(Mathf.Lerp(0f, -20f, flex), 0f, 0f);
             }
         }
     }
