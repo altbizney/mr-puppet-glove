@@ -48,7 +48,6 @@ public class wrmhlRead : MonoBehaviour
     private Quaternion _rotationQ;
     private Vector3 _rotationE;
 
-
     void Start()
     {
         myDevice.set(portName, baudRate, ReadTimeout, QueueLength);
@@ -112,8 +111,7 @@ public class wrmhlRead : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Space))
         {
-            orient.localEulerAngles = new Vector3(root.localEulerAngles.x * -1f, root.localEulerAngles.y * -1f, root.localEulerAngles.z * -1f);
-            // orient.LookAt(Camera.main.transform, Vector3.up);
+            orient.rotation = Quaternion.Inverse(root.localRotation);
         }
     }
 
