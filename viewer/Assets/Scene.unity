@@ -581,8 +581,8 @@ MonoBehaviour:
   flexMax: 35000
   jointTop: {fileID: 562718923}
   jointBottom: {fileID: 50884569}
-  sharpness: 0.5
-  moveRange: 10
+  sharpness: 0.035
+  moveRange: 15
 --- !u!1 &1316459218
 GameObject:
   m_ObjectHideFlags: 0
