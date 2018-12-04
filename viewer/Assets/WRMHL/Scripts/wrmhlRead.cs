@@ -38,11 +38,16 @@ public class wrmhlRead : MonoBehaviour
     public float flexMin = 9200.0f;
     public float flexMax = 35000.0f;
 
+    public Transform orient;
     public Transform root;
     public Transform joint;
 
     private string _data;
     private string[] _array;
+    private float _flex = 0f;
+    private Quaternion _rotationQ;
+    private Vector3 _rotationE;
+
 
     void Start()
     {
@@ -50,29 +55,65 @@ public class wrmhlRead : MonoBehaviour
         myDevice.connect();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         _data = myDevice.readQueue();
 
         if (_data != null)
         {
-            _array = _data.Split(',');
-
-            if (_array.Length >= 4)
+            if (_data.StartsWith("DEBUG;"))
             {
-                root.rotation = new Quaternion(
-                    float.Parse(_array[0]),
-                    float.Parse(_array[1]),
-                    float.Parse(_array[2]),
-                    float.Parse(_array[3])
-                );
+                Debug.Log(_data);
             }
-
-            if (_array.Length == 5)
+            else
             {
-                flex = Mathf.InverseLerp(flexMin, flexMax, float.Parse(_array[4]));
-                joint.localEulerAngles = new Vector3(Mathf.Lerp(0f, -20f, flex), 0f, 0f);
+                // Debug.Log(_data);
+
+                _array = _data.Split(',');
+
+                if (_array.Length == 4)
+                {
+                    // euler + flex
+                    root.localEulerAngles = new Vector3(
+                        float.Parse(_array[1]) * -1,
+                        float.Parse(_array[0]),
+                        float.Parse(_array[2])
+                    );
+                    _flex = float.Parse(_array[3]);
+                }
+                else if (_array.Length == 5)
+                {
+                    // quat + flex
+                    root.localRotation = new Quaternion(
+                        float.Parse(_array[0]),
+                        float.Parse(_array[1]),
+                        float.Parse(_array[2]),
+                        float.Parse(_array[3])
+                    );
+
+                    _flex = float.Parse(_array[4]);
+                }
+
+                flex = Mathf.InverseLerp(flexMin, flexMax, _flex);
+                joint.localEulerAngles = new Vector3(Mathf.Lerp(0f, -50f, flex), 0f, 0f);
             }
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            flexMax = _flex;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            flexMin = _flex;
+        }
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            orient.localEulerAngles = new Vector3(root.localEulerAngles.x * -1f, root.localEulerAngles.y * -1f, root.localEulerAngles.z * -1f);
+            // orient.LookAt(Camera.main.transform, Vector3.up);
         }
     }
 
