@@ -17,10 +17,10 @@ This is the perfect script for integration that need to avoid data loose.
 If you need speed and low latency take a look to wrmhlReadLatest.
 */
 
-public class wrmhlRead : MonoBehaviour
+public class Glove : MonoBehaviour
 {
 
-    wrmhl myDevice = new wrmhl(); // wrmhl is the bridge beetwen your computer and hardware.
+    private wrmhl bridge = new wrmhl();
 
     [Tooltip("SerialPort of your device.")]
     public string portName = "COM3";
@@ -41,13 +41,13 @@ public class wrmhlRead : MonoBehaviour
 
     void Start()
     {
-        myDevice.set(portName, baudRate, ReadTimeout, QueueLength);
-        myDevice.connect();
+        bridge.set(portName, baudRate, ReadTimeout, QueueLength);
+        bridge.connect();
     }
 
     void Update()
     {
-        _data = myDevice.readQueue();
+        _data = bridge.readQueue();
 
         if (_data != null)
         {
@@ -91,6 +91,6 @@ public class wrmhlRead : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        myDevice.close();
+        bridge.close();
     }
 }

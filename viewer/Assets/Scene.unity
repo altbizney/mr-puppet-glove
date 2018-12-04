@@ -486,8 +486,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1234539243}
   - component: {fileID: 1234539242}
-  - component: {fileID: 1234539245}
   - component: {fileID: 1234539244}
+  - component: {fileID: 1234539245}
   m_Layer: 0
   m_Name: WRMHL
   m_TagString: Untagged
@@ -503,7 +503,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1234539241}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75f53c1c022d6264eb7a8aa68c9871d0, type: 3}
+  m_Script: {fileID: 11500000, guid: fb6e2e4b528f84b4a9f45c6e3ea9baeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   portName: COM3

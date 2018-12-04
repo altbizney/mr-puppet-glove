@@ -9,7 +9,7 @@ public class ProxyRotation : MonoBehaviour
 
     void Update()
     {
-        root.localRotation = wrmhlRead.rotation;
+        root.localRotation = Glove.rotation;
 
         if (Input.GetKeyDown(KeyCode.Space))
         {

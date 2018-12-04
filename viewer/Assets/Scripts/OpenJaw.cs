@@ -15,7 +15,7 @@ public class OpenJaw : MonoBehaviour
             Mathf.Lerp(
                 0f,
                 -50f,
-                Mathf.InverseLerp(flexMin, flexMax, wrmhlRead.flex)
+                Mathf.InverseLerp(flexMin, flexMax, Glove.flex)
             ),
             0f,
             0f
@@ -23,11 +23,11 @@ public class OpenJaw : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            flexMax = wrmhlRead.flex;
+            flexMax = Glove.flex;
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            flexMin = wrmhlRead.flex;
+            flexMin = Glove.flex;
         }
     }
 }
