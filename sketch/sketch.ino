@@ -79,5 +79,5 @@ void loop(void)
     Serial.println(mag, DEC);
   */
 
-  delay(50);
+  delay(60);
 }

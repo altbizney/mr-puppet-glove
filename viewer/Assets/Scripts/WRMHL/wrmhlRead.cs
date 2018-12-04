@@ -54,7 +54,7 @@ public class wrmhlRead : MonoBehaviour
         myDevice.connect();
     }
 
-    void FixedUpdate()
+    void Update()
     {
         _data = myDevice.readQueue();
 
@@ -97,10 +97,7 @@ public class wrmhlRead : MonoBehaviour
                 joint.localEulerAngles = new Vector3(Mathf.Lerp(0f, -50f, flex), 0f, 0f);
             }
         }
-    }
 
-    void Update()
-    {
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             flexMax = _flex;
@@ -112,6 +109,7 @@ public class wrmhlRead : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Space))
         {
             orient.rotation = Quaternion.Inverse(root.localRotation);
+            // orient.LookAt(Camera.main.transform, Vector3.up);
         }
     }
 
