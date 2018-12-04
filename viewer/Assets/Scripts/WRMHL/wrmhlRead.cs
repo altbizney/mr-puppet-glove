@@ -28,25 +28,16 @@ public class wrmhlRead : MonoBehaviour
     [Tooltip("Match with Arduino Baudrate")]
     public int baudRate = 250000;
 
-
     [Tooltip("Make slightly higher than Arduino update frequency")]
     public int ReadTimeout = 205;
 
     public int QueueLength = 1;
 
-    private float flex = 0.0f;
-    public float flexMin = 9200.0f;
-    public float flexMax = 35000.0f;
-
-    public Transform orient;
-    public Transform root;
-    public Transform joint;
+    public static Quaternion rotation;
+    public static float flex = 0f;
 
     private string _data;
     private string[] _array;
-    private float _flex = 0f;
-    private Quaternion _rotationQ;
-    private Vector3 _rotationE;
 
     void Start()
     {
@@ -73,43 +64,28 @@ public class wrmhlRead : MonoBehaviour
                 if (_array.Length == 4)
                 {
                     // euler + flex
-                    root.localEulerAngles = new Vector3(
+                    // TODO: understand the axis manipulation here better
+                    rotation = Quaternion.Euler(
                         float.Parse(_array[1]) * -1,
                         float.Parse(_array[0]),
                         float.Parse(_array[2])
                     );
-                    _flex = float.Parse(_array[3]);
+                    flex = float.Parse(_array[3]);
                 }
                 else if (_array.Length == 5)
                 {
                     // quat + flex
-                    root.localRotation = new Quaternion(
+                    // TODO: determine if this needs axis manipulation also
+                    rotation = new Quaternion(
                         float.Parse(_array[0]),
                         float.Parse(_array[1]),
                         float.Parse(_array[2]),
                         float.Parse(_array[3])
                     );
 
-                    _flex = float.Parse(_array[4]);
+                    flex = float.Parse(_array[4]);
                 }
-
-                flex = Mathf.InverseLerp(flexMin, flexMax, _flex);
-                joint.localEulerAngles = new Vector3(Mathf.Lerp(0f, -50f, flex), 0f, 0f);
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            flexMax = _flex;
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            flexMin = _flex;
-        }
-        else if (Input.GetKeyDown(KeyCode.Space))
-        {
-            orient.rotation = Quaternion.Inverse(root.localRotation);
-            // orient.LookAt(Camera.main.transform, Vector3.up);
         }
     }
 
