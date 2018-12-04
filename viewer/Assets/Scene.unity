@@ -113,6 +113,35 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &50884568
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 50884569}
+  m_Layer: 0
+  m_Name: Bottom Joint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &50884569
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 50884568}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.25, z: -0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 97398500}
+  m_Father: {fileID: 728637659}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &97398499
 GameObject:
   m_ObjectHideFlags: 0
@@ -137,12 +166,12 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 97398499}
   m_LocalRotation: {x: -0, y: -0, z: 0.000000006039045, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
+  m_LocalPosition: {x: 0, y: -0.25, z: 0.5}
   m_LocalScale: {x: 1, y: 0.5, z: 1}
   m_Children:
   - {fileID: 1793206278}
-  m_Father: {fileID: 728637659}
-  m_RootOrder: 2
+  m_Father: {fileID: 50884569}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &97398501
 MeshRenderer:
@@ -261,7 +290,7 @@ GameObject:
   m_Component:
   - component: {fileID: 562718923}
   m_Layer: 0
-  m_Name: Jaw Joint
+  m_Name: Top Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -308,7 +337,7 @@ Transform:
   m_Children:
   - {fileID: 1859265794}
   - {fileID: 562718923}
-  - {fileID: 97398500}
+  - {fileID: 50884569}
   m_Father: {fileID: 2079042521}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -536,6 +565,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orient: {fileID: 2079042521}
   root: {fileID: 728637659}
+  sharpness: 0.5
 --- !u!114 &1234539245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -549,7 +579,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flexMin: 9200
   flexMax: 35000
-  joint: {fileID: 562718923}
+  jointTop: {fileID: 562718923}
+  jointBottom: {fileID: 50884569}
+  sharpness: 0.5
+  moveRange: 10
 --- !u!1 &1316459218
 GameObject:
   m_ObjectHideFlags: 0

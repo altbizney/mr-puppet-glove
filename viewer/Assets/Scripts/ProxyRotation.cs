@@ -7,9 +7,13 @@ public class ProxyRotation : MonoBehaviour
     public Transform orient;
     public Transform root;
 
+    [RangeAttribute(0f, 1f)]
+    public float sharpness = 0.5f;
+
     void Update()
     {
-        root.localRotation = Glove.rotation;
+        // Exponential ease
+        root.localRotation = Quaternion.Slerp(root.localRotation, Glove.rotation, sharpness);
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
