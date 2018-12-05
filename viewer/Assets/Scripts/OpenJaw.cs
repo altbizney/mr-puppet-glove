@@ -8,7 +8,6 @@ public class OpenJaw : MonoBehaviour
     public float flexMax = 35000.0f;
 
     public Transform jointTop;
-    public Transform jointBottom;
 
     [RangeAttribute(0f, 1f)]
     public float speed = 0.035f;
@@ -22,12 +21,8 @@ public class OpenJaw : MonoBehaviour
     {
         _flex = Mathf.SmoothDamp(_flex, Glove.flex, ref flexVelocity, speed);
 
-        jointTop.localEulerAngles = new Vector3(
-            Mathf.Lerp(0f, -moveRange, Mathf.InverseLerp(flexMin, flexMax, _flex)), 0f, 0f
-        );
-
-        jointBottom.localEulerAngles = new Vector3(
-            Mathf.Lerp(0f, moveRange, Mathf.InverseLerp(flexMin, flexMax, _flex)), 0f, 0f
+        jointTop.localPosition = new Vector3(
+            0f, Mathf.Lerp(0f, -moveRange, Mathf.InverseLerp(flexMin, flexMax, _flex)), 0f
         );
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
