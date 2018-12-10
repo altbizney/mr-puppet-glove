@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class OpenJaw : MonoBehaviour
 {
-    public float flexMin = 9200.0f;
-    public float flexMax = 35000.0f;
+    public int jawMin = 0;
+    public int jawMax = 1023;
 
     public Transform joint;
     public Transform initialPose;
@@ -14,27 +14,25 @@ public class OpenJaw : MonoBehaviour
     [RangeAttribute(0f, 1f)]
     public float speed = 0.035f;
 
-    public float moveRange = 10f;
-
-    private float _flex;
-    private float flexVelocity = 0f;
-    private float _flex_norm;
+    private float _jaw;
+    private float jawVelocity = 0f;
+    private float _jawNorm;
 
     void Update()
     {
-        _flex = Mathf.SmoothDamp(_flex, Glove.flex, ref flexVelocity, speed);
-        _flex_norm = Mathf.InverseLerp(flexMin, flexMax, _flex);
+        _jaw = Mathf.SmoothDamp(_jaw, Glove.jaw, ref jawVelocity, speed);
+        _jawNorm = Mathf.InverseLerp(jawMin, jawMax, _jaw);
 
-        joint.localPosition = Vector3.Lerp(initialPose.localPosition, extremePose.localPosition, _flex_norm);
-        joint.localRotation = Quaternion.Lerp(initialPose.localRotation, extremePose.localRotation, _flex_norm);
+        joint.localPosition = Vector3.Lerp(initialPose.localPosition, extremePose.localPosition, _jawNorm);
+        joint.localRotation = Quaternion.Lerp(initialPose.localRotation, extremePose.localRotation, _jawNorm);
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            flexMax = Glove.flex;
+            jawMin = Glove.jaw;
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            flexMin = Glove.flex;
+            jawMin = Glove.jaw;
         }
     }
 }

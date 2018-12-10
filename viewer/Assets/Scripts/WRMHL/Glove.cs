@@ -33,7 +33,7 @@ public class Glove : MonoBehaviour
     public int QueueLength = 1;
 
     public static Quaternion rotation;
-    public static float flex = 0f;
+    public static int jaw = 0;
 
     private string _data;
     private string[] _array;
@@ -69,7 +69,7 @@ public class Glove : MonoBehaviour
                         float.Parse(_array[1]),
                         float.Parse(_array[3])
                     );
-                    flex = float.Parse(_array[4]);
+                    jaw = int.Parse(_array[4]);
                 }
                 else if (_array[0] == "Q")
                 {
@@ -82,7 +82,7 @@ public class Glove : MonoBehaviour
                         float.Parse(_array[4])
                     );
 
-                    flex = float.Parse(_array[5]);
+                    jaw = int.Parse(_array[5]);
                 }
             }
         }
