@@ -14,7 +14,7 @@ void setup(void)
   if (!bno.begin())
   {
     /* There was a problem detecting the BNO055 ... check your connections */
-    Serial.println("DEBUG;Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+    Serial.println("DEBUG: Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     while (1);
   }
 
@@ -22,47 +22,46 @@ void setup(void)
 
   bno.setExtCrystalUse(true);
 
-  Serial.println("DEBUG;Setup complete");
+  Serial.println("DEBUG: Setup complete");
 }
 
 void loop(void)
 {
+  imu::Quaternion quat = bno.getQuat();
+  Serial.print("Q,");
+  Serial.print(quat.x(), 4);
+  Serial.print(",");
+  Serial.print(quat.y(), 4);
+  Serial.print(",");
+  Serial.print(quat.z(), 4);
+  Serial.print(",");
+  Serial.print(quat.w(), 4);
 
   /*
-    imu::Quaternion quat = bno.getQuat();
-    Serial.print(quat.x(), 4);
+    imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+    Serial.print("E,");
+    Serial.print(euler.x());
     Serial.print(",");
-    Serial.print(quat.y(), 4);
+    Serial.print(euler.y());
     Serial.print(",");
-    Serial.print(quat.z(), 4);
-    Serial.print(",");
-    Serial.print(quat.w(), 4);
+    Serial.print(euler.z());
   */
 
-  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-  Serial.print(euler.x());
   Serial.print(",");
-  Serial.print(euler.y());
-  Serial.print(",");
-  Serial.print(euler.z());
+  Serial.print(analogRead(A0));
 
+  uint8_t system, gyro, accel, mag = 0;
+  bno.getCalibration(&system, &gyro, &accel, &mag);
+  Serial.print(",CALIBRATION: Sys=");
+  Serial.print(system, DEC);
+  Serial.print(" Gyro=");
+  Serial.print(gyro, DEC);
+  Serial.print(" Accel=");
+  Serial.print(accel, DEC);
+  Serial.print(" Mag=");
+  Serial.print(mag, DEC);
 
-  Serial.print(",");
-  Serial.print("0");
   Serial.println("");
-
-  /*
-    uint8_t system, gyro, accel, mag = 0;
-    bno.getCalibration(&system, &gyro, &accel, &mag);
-    Serial.print("DEBUG;CALIBRATION: Sys=");
-    Serial.print(system, DEC);
-    Serial.print(" Gyro=");
-    Serial.print(gyro, DEC);
-    Serial.print(" Accel=");
-    Serial.print(accel, DEC);
-    Serial.print(" Mag=");
-    Serial.println(mag, DEC);
-  */
 
   delay(60);
 }

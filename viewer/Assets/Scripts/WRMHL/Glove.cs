@@ -19,7 +19,6 @@ If you need speed and low latency take a look to wrmhlReadLatest.
 
 public class Glove : MonoBehaviour
 {
-
     private wrmhl bridge = new wrmhl();
 
     [Tooltip("SerialPort of your device.")]
@@ -51,39 +50,39 @@ public class Glove : MonoBehaviour
 
         if (_data != null)
         {
-            if (_data.StartsWith("DEBUG;"))
+            if (_data.StartsWith("DEBUG"))
             {
                 Debug.Log(_data);
             }
             else
             {
-                // Debug.Log(_data);
+                Debug.Log(_data);
 
                 _array = _data.Split(',');
 
-                if (_array.Length == 4)
+                if (_array[0] == "E")
                 {
                     // euler + flex
                     // TODO: understand the axis manipulation here better
                     rotation = Quaternion.Euler(
-                        float.Parse(_array[1]) * -1,
-                        float.Parse(_array[0]),
-                        float.Parse(_array[2])
+                        float.Parse(_array[2]) * -1,
+                        float.Parse(_array[1]),
+                        float.Parse(_array[3])
                     );
-                    flex = float.Parse(_array[3]);
+                    flex = float.Parse(_array[4]);
                 }
-                else if (_array.Length == 5)
+                else if (_array[0] == "Q")
                 {
                     // quat + flex
                     // TODO: determine if this needs axis manipulation also
                     rotation = new Quaternion(
-                        float.Parse(_array[0]),
                         float.Parse(_array[1]),
                         float.Parse(_array[2]),
-                        float.Parse(_array[3])
+                        float.Parse(_array[3]),
+                        float.Parse(_array[4])
                     );
 
-                    flex = float.Parse(_array[4]);
+                    flex = float.Parse(_array[5]);
                 }
             }
         }
@@ -92,5 +91,13 @@ public class Glove : MonoBehaviour
     void OnApplicationQuit()
     {
         bridge.close();
+    }
+
+    void OnDrawGizmos()
+    {
+        Debug.DrawRay(Vector3.zero, rotation * transform.forward, Color.red, 0f, true);
+        Debug.DrawRay(Vector3.zero, rotation * transform.up, Color.green, 0f, true);
+        Debug.DrawRay(Vector3.zero, rotation * transform.right, Color.blue, 0f, true);
+
     }
 }
