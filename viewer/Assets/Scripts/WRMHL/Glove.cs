@@ -85,6 +85,12 @@ public class Glove : MonoBehaviour
                     jaw = int.Parse(_array[5]);
                 }
             }
+
+            // DebugGraph.MultiLog(rotation.x, "x");
+            // DebugGraph.MultiLog(rotation.y, "y");
+            // DebugGraph.MultiLog(rotation.z, "z");
+            // DebugGraph.MultiLog(rotation.w, "w");
+            // DebugGraph.MultiLog(jaw, "jaw");
         }
     }
 

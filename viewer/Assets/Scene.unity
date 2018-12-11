@@ -1469,7 +1469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jawMin: 230
-  jawMax: 245
+  jawMax: 800
   joint: {fileID: 242413418}
   initialPose: {fileID: 783460641}
   extremePose: {fileID: 1774723389}
