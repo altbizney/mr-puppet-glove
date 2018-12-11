@@ -8,6 +8,8 @@ public class Simulator : MonoBehaviour
     private int[] jaw;
     private int step = 0;
 
+    public float FPS = 20f;
+
     void Start()
     {
         string[] _lines = System.IO.File.ReadAllText("Assets/sample.CSV").Split("\n"[0]);
@@ -35,11 +37,12 @@ public class Simulator : MonoBehaviour
         {
             jaw.SetValue(int.Parse(_), i++);
         }
+
+        InvokeRepeating ("Render", 0f, 1f / FPS);
     }
 
-    void Update()
+    void Render()
     {
-
         Glove.rotation = rotation[step];
         Glove.jaw = jaw[step];
 
