@@ -56,7 +56,7 @@ public class Glove : MonoBehaviour
             }
             else
             {
-                Debug.Log(_data);
+                //Debug.Log(_data);
 
                 _array = _data.Split(',');
 
@@ -96,7 +96,11 @@ public class Glove : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        bridge.close();
+        try
+        {
+            bridge.close();
+        }
+        catch { }
     }
 
     void OnDrawGizmos()
