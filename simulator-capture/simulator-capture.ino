@@ -28,7 +28,7 @@ void setup(void)
 void loop(void)
 {
   imu::Quaternion quat = bno.getQuat();
-  Serial.print("Q:");
+  Serial.print("Q,");
   Serial.print(quat.x(), 4);
   Serial.print(",");
   Serial.print(quat.y(), 4);
@@ -47,7 +47,7 @@ void loop(void)
     Serial.print(euler.z());
   */
 
-  Serial.print(";H:");
+  Serial.print(",");
   Serial.print(analogRead(A0));
 
   Serial.println("");
