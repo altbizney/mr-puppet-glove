@@ -56,7 +56,7 @@ public class Glove : MonoBehaviour
             }
             else
             {
-                //Debug.Log(_data);
+                Debug.Log(_data);
 
                 _array = _data.Split(',');
 
