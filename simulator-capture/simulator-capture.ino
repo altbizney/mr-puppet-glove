@@ -27,11 +27,8 @@ void setup(void)
 
 void loop(void)
 {
-  Serial.print("TS:");
-  Serial.print(millis());
-  
   imu::Quaternion quat = bno.getQuat();
-  Serial.print(";Q:");
+  Serial.print("Q:");
   Serial.print(quat.x(), 4);
   Serial.print(",");
   Serial.print(quat.y(), 4);
@@ -52,17 +49,6 @@ void loop(void)
 
   Serial.print(";H:");
   Serial.print(analogRead(A0));
-
-  uint8_t system, gyro, accel, mag = 0;
-  bno.getCalibration(&system, &gyro, &accel, &mag);
-  Serial.print(";C:Sys=");
-  Serial.print(system, DEC);
-  Serial.print(" Gyro=");
-  Serial.print(gyro, DEC);
-  Serial.print(" Accel=");
-  Serial.print(accel, DEC);
-  Serial.print(" Mag=");
-  Serial.print(mag, DEC);
 
   Serial.println("");
 
