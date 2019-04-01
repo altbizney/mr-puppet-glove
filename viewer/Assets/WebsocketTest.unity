@@ -457,7 +457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b74b9a592dcf4e76b6a3d24a08e86c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WebsocketUri: ws://echo.websocket.org/
+  WebsocketUri: ws://localhost:3000
 --- !u!4 &1270007465
 Transform:
   m_ObjectHideFlags: 0
