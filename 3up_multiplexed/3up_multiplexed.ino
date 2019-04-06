@@ -114,7 +114,7 @@ void loop() {
   Serial.print("\t");
 
   // read wrist
-  tcaselect(1);
+  tcaselect(0);
   print_sensor_data(&wrist);
   Serial.print("\t");
 
