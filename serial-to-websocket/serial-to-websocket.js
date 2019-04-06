@@ -21,6 +21,7 @@ const parser = new Readline()
 port.pipe(parser)
 parser.on('data', (data) => {
   server.broadcast(data);
+  console.log(data);
 });
 server.connection_count = 0;
 
