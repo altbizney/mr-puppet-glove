@@ -111,17 +111,17 @@ void setup() {
 void loop() {
   // read hand
   Serial.print(analogRead(A0));
-  Serial.print("\t");
+  Serial.print(";");
 
   // read wrist
   tcaselect(0);
   print_sensor_data(&wrist);
-  Serial.print("\t");
+  Serial.print(";");
 
   // read elbow
   tcaselect(1);
   print_sensor_data(&elbow);
-  Serial.print("\t");
+  Serial.print(";");
 
   // read shoulder
   tcaselect(2);
