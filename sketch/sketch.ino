@@ -12,6 +12,7 @@ Adafruit_BNO055 elbow = Adafruit_BNO055(55);
 Adafruit_BNO055 shoulder = Adafruit_BNO055(55);
 
 #define TCAADDR 0x70
+#define BAUD 115200
 
 void tcaselect(uint8_t i) {
   if (i > 7) return;
@@ -51,7 +52,7 @@ void setup() {
 
   Wire.begin();
 
-  Serial.begin(250000);
+  Serial.begin(BAUD);
 
   // scan i2c ports
   Serial.println("DEBUG:TCAScanner ready");
