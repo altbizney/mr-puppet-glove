@@ -13,6 +13,7 @@ Adafruit_BNO055 shoulder = Adafruit_BNO055(55);
 
 #define TCAADDR 0x70
 #define BAUD 115200
+#define JAW_ONLY false
 
 void tcaselect(uint8_t i) {
   if (i > 7) return;
@@ -53,6 +54,11 @@ void setup() {
   Wire.begin();
 
   Serial.begin(BAUD);
+
+  if (JAW_ONLY) {
+    Serial.println("DEBUG: setup complete (jaw only)");
+    return;
+  }
 
   // scan i2c ports
   Serial.println("DEBUG:TCAScanner ready");
@@ -113,20 +119,25 @@ void loop() {
   Serial.print(analogRead(A0));
   Serial.print(";");
 
-  // read wrist
-  tcaselect(0);
-  print_sensor_data(&wrist);
-  Serial.print(";");
+  if (JAW_ONLY) {
+    Serial.print("0,0,0,0,3,3,3,3;0,0,0,0,3,3,3,3;0,0,0,0,3,3,3,3");
+  } else {
+    // read wrist
+    tcaselect(0);
+    print_sensor_data(&wrist);
+    Serial.print(";");
 
-  // read elbow
-  tcaselect(1);
-  print_sensor_data(&elbow);
-  Serial.print(";");
+    // read elbow
+    tcaselect(1);
+    print_sensor_data(&elbow);
+    Serial.print(";");
 
-  // read shoulder
-  tcaselect(2);
-  print_sensor_data(&shoulder);
-  Serial.println("");
+    // read shoulder
+    tcaselect(2);
+    print_sensor_data(&shoulder);
+  }
+
+  Serial.println();
 
   delay(60);
 }
