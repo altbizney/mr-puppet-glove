@@ -33,15 +33,6 @@ void print_sensor_data(Adafruit_BNO055 *bno)
   Serial.print(",");
   Serial.print(quat.w(), 4);
 
-  // convert to unity-style quaternions
-  //  Serial.print(quat.w() * -1, 4);
-  //  Serial.print(",");
-  //  Serial.print(quat.y() * -1, 4);
-  //  Serial.print(",");
-  //  Serial.print(quat.z() * -1, 4);
-  //  Serial.print(",");
-  //  Serial.print(quat.x(), 4);
-
   uint8_t system, gyro, accel, mag = 0;
   bno->getCalibration(&system, &gyro, &accel, &mag);
   Serial.print(",");
