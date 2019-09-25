@@ -62,111 +62,129 @@ void setup() {
 
   Serial.begin(BAUD);
 
-  Serial.println("DEBUG: trying direct access to wrist");
-
-  if (!wrist.begin()) {
-    Serial.println("DEBUG: wrist not directly connected, skipping");
-  } else {
-    delay(1000);
-    wrist.setExtCrystalUse(true);
-    wrist_found_direct = true;
-    Serial.println("DEBUG: wrist direct access setup complete");
-
-    // BAIL EARLY ON REST OF SETUP
-    return;
-  }
-
-  // scan i2c ports
-  Serial.println("DEBUG:TCAScanner ready");
-
-  Serial.print("DEBUG:Scanning for wrist on TCA Port #");
-  Serial.println(WRIST_ADDR);
-  tcaselect(WRIST_ADDR);
-
-  for (uint8_t addr = 0; addr <= 127; addr++) {
-    if (addr == TCAADDR) continue;
-
-    uint8_t data;
-    if (! twi_writeTo(addr, &data, 0, 1, 1)) {
-      Serial.print("DEBUG:Found wrist at I2C 0x");
-      Serial.println(addr, HEX);
-      wrist_found = true;
+  // count how many devices are connected
+  byte device_count = 0;
+  for (byte i = 1; i < 120; i++)
+  {
+    Wire.beginTransmission (i);
+    if (Wire.endTransmission () == 0)
+    {
+      Serial.print ("DEBUG: Found address: ");
+      Serial.print (i, DEC);
+      Serial.print (" (0x");
+      Serial.print (i, HEX);
+      Serial.println (")");
+      device_count++;
+      delay (1);  // maybe unneeded?
     }
   }
 
-  Serial.print("DEBUG:Scanning for elbow on TCA Port #");
-  Serial.println(ELBOW_ADDR);
-  tcaselect(ELBOW_ADDR);
+  Serial.print("DEBUG: Devices found: ");
+  Serial.println(device_count);
 
-  for (uint8_t addr = 0; addr <= 127; addr++) {
-    if (addr == TCAADDR) continue;
-
-    uint8_t data;
-    if (! twi_writeTo(addr, &data, 0, 1, 1)) {
-      Serial.print("DEBUG:Found elbow at I2C 0x");
-      Serial.println(addr, HEX);
-      elbow_found = true;
-    }
-  }
-
-  Serial.print("DEBUG:Scanning for shoulder on TCA Port #");
-  Serial.println(SHOULDER_ADDR);
-  tcaselect(SHOULDER_ADDR);
-
-  for (uint8_t addr = 0; addr <= 127; addr++) {
-    if (addr == TCAADDR) continue;
-
-    uint8_t data;
-    if (! twi_writeTo(addr, &data, 0, 1, 1)) {
-      Serial.print("DEBUG:Found shoulder at I2C 0x");
-      Serial.println(addr, HEX);
-      shoulder_found = true;
-    }
-  }
-
-  // init wrist
-  if (wrist_found) {
+  if (device_count > 1) {
+    // if there's 2 or more devices, it means we have a multiplxer. start sensor scan.
+    Serial.print("DEBUG:Scanning for wrist on TCA Port #");
+    Serial.println(WRIST_ADDR);
     tcaselect(WRIST_ADDR);
-    if (!wrist.begin())
-    {
-      Serial.println("DEBUG: wrist was found but is not reachable");
-      while (1);
-    }
-    delay(1000);
-    wrist.setExtCrystalUse(true);
-    Serial.println("DEBUG: wrist setup complete");
-  } else {
-    Serial.println("DEBUG: wrist not found, skipping");
-  }
 
-  // init elbow
-  if (elbow_found) {
+    for (uint8_t addr = 0; addr <= 127; addr++) {
+      if (addr == TCAADDR) continue;
+
+      uint8_t data;
+      if (! twi_writeTo(addr, &data, 0, 1, 1)) {
+        Serial.print("DEBUG:Found wrist at I2C 0x");
+        Serial.println(addr, HEX);
+        wrist_found = true;
+      }
+    }
+
+    Serial.print("DEBUG:Scanning for elbow on TCA Port #");
+    Serial.println(ELBOW_ADDR);
     tcaselect(ELBOW_ADDR);
-    if (!elbow.begin())
-    {
-      Serial.println("DEBUG: elbow was found but is not reachable");
-      while (1);
-    }
-    delay(1000);
-    elbow.setExtCrystalUse(true);
-    Serial.println("DEBUG: elbow setup complete");
-  } else {
-    Serial.println("DEBUG: elbow not found, skipping");
-  }
 
-  // init shoulder
-  if (shoulder_found) {
-    tcaselect(SHOULDER_ADDR);
-    if (!shoulder.begin())
-    {
-      Serial.println("DEBUG: shoulder was found but is not reachable");
-      while (1);
+    for (uint8_t addr = 0; addr <= 127; addr++) {
+      if (addr == TCAADDR) continue;
+
+      uint8_t data;
+      if (! twi_writeTo(addr, &data, 0, 1, 1)) {
+        Serial.print("DEBUG:Found elbow at I2C 0x");
+        Serial.println(addr, HEX);
+        elbow_found = true;
+      }
     }
-    delay(1000);
-    shoulder.setExtCrystalUse(true);
-    Serial.println("DEBUG: shoulder setup complete");
+
+    Serial.print("DEBUG:Scanning for shoulder on TCA Port #");
+    Serial.println(SHOULDER_ADDR);
+    tcaselect(SHOULDER_ADDR);
+
+    for (uint8_t addr = 0; addr <= 127; addr++) {
+      if (addr == TCAADDR) continue;
+
+      uint8_t data;
+      if (! twi_writeTo(addr, &data, 0, 1, 1)) {
+        Serial.print("DEBUG:Found shoulder at I2C 0x");
+        Serial.println(addr, HEX);
+        shoulder_found = true;
+      }
+    }
+
+    // init wrist
+    if (wrist_found) {
+      tcaselect(WRIST_ADDR);
+      if (!wrist.begin())
+      {
+        Serial.println("DEBUG: wrist was found but is not reachable");
+        while (1);
+      }
+      delay(1000);
+      wrist.setExtCrystalUse(true);
+      Serial.println("DEBUG: wrist setup complete");
+    } else {
+      Serial.println("DEBUG: wrist not found, skipping");
+    }
+
+    // init elbow
+    if (elbow_found) {
+      tcaselect(ELBOW_ADDR);
+      if (!elbow.begin())
+      {
+        Serial.println("DEBUG: elbow was found but is not reachable");
+        while (1);
+      }
+      delay(1000);
+      elbow.setExtCrystalUse(true);
+      Serial.println("DEBUG: elbow setup complete");
+    } else {
+      Serial.println("DEBUG: elbow not found, skipping");
+    }
+
+    // init shoulder
+    if (shoulder_found) {
+      tcaselect(SHOULDER_ADDR);
+      if (!shoulder.begin())
+      {
+        Serial.println("DEBUG: shoulder was found but is not reachable");
+        while (1);
+      }
+      delay(1000);
+      shoulder.setExtCrystalUse(true);
+      Serial.println("DEBUG: shoulder setup complete");
+    } else {
+      Serial.println("DEBUG: shoulder not found, skipping");
+    }
   } else {
-    Serial.println("DEBUG: shoulder not found, skipping");
+    // there were 1 (or 0) devices found. try direct access to the wrist sensor
+    Serial.println("DEBUG: trying direct access to wrist");
+
+    if (!wrist.begin()) {
+      Serial.println("DEBUG: wrist not directly connected, skipping");
+    } else {
+      delay(1000);
+      wrist.setExtCrystalUse(true);
+      wrist_found_direct = true;
+      Serial.println("DEBUG: wrist direct access setup complete");
+    }
   }
 }
 
