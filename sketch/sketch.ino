@@ -11,9 +11,16 @@ Adafruit_BNO055 wrist = Adafruit_BNO055(55);
 Adafruit_BNO055 elbow = Adafruit_BNO055(55);
 Adafruit_BNO055 shoulder = Adafruit_BNO055(55);
 
+bool wrist_found_direct = false;
+bool wrist_found = false;
+bool elbow_found = false;
+bool shoulder_found = false;
+
 #define TCAADDR 0x70
 #define BAUD 115200
-#define JAW_ONLY false
+#define WRIST_ADDR 2
+#define ELBOW_ADDR 1
+#define SHOULDER_ADDR 0
 
 void tcaselect(uint8_t i) {
   if (i > 7) return;
@@ -55,63 +62,112 @@ void setup() {
 
   Serial.begin(BAUD);
 
-  if (JAW_ONLY) {
-    Serial.println("DEBUG: setup complete (jaw only)");
+  Serial.println("DEBUG: trying direct access to wrist");
+
+  if (!wrist.begin()) {
+    Serial.println("DEBUG: wrist not directly connected, skipping");
+  } else {
+    delay(1000);
+    wrist.setExtCrystalUse(true);
+    wrist_found_direct = true;
+    Serial.println("DEBUG: wrist direct access setup complete");
+
+    // BAIL EARLY ON REST OF SETUP
     return;
   }
 
   // scan i2c ports
   Serial.println("DEBUG:TCAScanner ready");
-  for (uint8_t t = 0; t < 8; t++) {
-    tcaselect(t);
-    Serial.print("DEBUG:TCA Port #");
-    Serial.println(t);
 
-    for (uint8_t addr = 0; addr <= 127; addr++) {
-      if (addr == TCAADDR) continue;
+  Serial.print("DEBUG:Scanning for wrist on TCA Port #");
+  Serial.println(WRIST_ADDR);
+  tcaselect(WRIST_ADDR);
 
-      uint8_t data;
-      if (! twi_writeTo(addr, &data, 0, 1, 1)) {
-        Serial.print("DEBUG:Found I2C 0x");
-        Serial.println(addr, HEX);
-      }
+  for (uint8_t addr = 0; addr <= 127; addr++) {
+    if (addr == TCAADDR) continue;
+
+    uint8_t data;
+    if (! twi_writeTo(addr, &data, 0, 1, 1)) {
+      Serial.print("DEBUG:Found wrist at I2C 0x");
+      Serial.println(addr, HEX);
+      wrist_found = true;
     }
   }
 
-  // init wrist on port 0
-  tcaselect(0);
-  if (!wrist.begin())
-  {
-    Serial.println("DEBUG: wrist BNO055 not detected");
-    while (1);
-  }
-  delay(1000);
-  wrist.setExtCrystalUse(true);
-  Serial.println("DEBUG: wrist setup complete");
+  Serial.print("DEBUG:Scanning for elbow on TCA Port #");
+  Serial.println(ELBOW_ADDR);
+  tcaselect(ELBOW_ADDR);
 
-  // init elbow on port 1
-  tcaselect(1);
-  if (!elbow.begin())
-  {
-    Serial.println("DEBUG: elbow BNO055 not detected");
-    while (1);
-  }
-  delay(1000);
-  elbow.setExtCrystalUse(true);
-  Serial.println("DEBUG: elbow setup complete");
+  for (uint8_t addr = 0; addr <= 127; addr++) {
+    if (addr == TCAADDR) continue;
 
-  // init shoulder on port 2
-  tcaselect(2);
-  if (!shoulder.begin())
-  {
-    Serial.println("DEBUG: shoulder BNO055 not detected");
-    while (1);
+    uint8_t data;
+    if (! twi_writeTo(addr, &data, 0, 1, 1)) {
+      Serial.print("DEBUG:Found elbow at I2C 0x");
+      Serial.println(addr, HEX);
+      elbow_found = true;
+    }
   }
-  delay(1000);
-  shoulder.setExtCrystalUse(true);
-  Serial.println("DEBUG: shoulder setup complete");
 
-  Serial.println("DEBUG: setup complete");
+  Serial.print("DEBUG:Scanning for shoulder on TCA Port #");
+  Serial.println(SHOULDER_ADDR);
+  tcaselect(SHOULDER_ADDR);
+
+  for (uint8_t addr = 0; addr <= 127; addr++) {
+    if (addr == TCAADDR) continue;
+
+    uint8_t data;
+    if (! twi_writeTo(addr, &data, 0, 1, 1)) {
+      Serial.print("DEBUG:Found shoulder at I2C 0x");
+      Serial.println(addr, HEX);
+      shoulder_found = true;
+    }
+  }
+
+  // init wrist
+  if (wrist_found) {
+    tcaselect(WRIST_ADDR);
+    if (!wrist.begin())
+    {
+      Serial.println("DEBUG: wrist was found but is not reachable");
+      while (1);
+    }
+    delay(1000);
+    wrist.setExtCrystalUse(true);
+    Serial.println("DEBUG: wrist setup complete");
+  } else {
+    Serial.println("DEBUG: wrist not found, skipping");
+  }
+
+  // init elbow
+  if (elbow_found) {
+    tcaselect(ELBOW_ADDR);
+    if (!elbow.begin())
+    {
+      Serial.println("DEBUG: elbow was found but is not reachable");
+      while (1);
+    }
+    delay(1000);
+    elbow.setExtCrystalUse(true);
+    Serial.println("DEBUG: elbow setup complete");
+  } else {
+    Serial.println("DEBUG: elbow not found, skipping");
+  }
+
+  // init shoulder
+  if (shoulder_found) {
+    tcaselect(SHOULDER_ADDR);
+    if (!shoulder.begin())
+    {
+      Serial.println("DEBUG: shoulder was found but is not reachable");
+      while (1);
+    }
+    delay(1000);
+    shoulder.setExtCrystalUse(true);
+    Serial.println("DEBUG: shoulder setup complete");
+  } else {
+    Serial.println("DEBUG: shoulder not found, skipping");
+  }
 }
 
 void loop() {
@@ -119,22 +175,30 @@ void loop() {
   Serial.print(analogRead(A0));
   Serial.print(";");
 
-  if (JAW_ONLY) {
-    Serial.print("0,0,0,0,3,3,3,3;0,0,0,0,3,3,3,3;0,0,0,0,3,3,3,3");
-  } else {
-    // read wrist
-    tcaselect(2);
+  // read wrist
+  if (wrist_found || wrist_found_direct) {
+    if (!wrist_found_direct) tcaselect(WRIST_ADDR);
     print_sensor_data(&wrist);
-    Serial.print(";");
+  } else {
+    Serial.print("0,0,0,0,3,3,3,3");
+  }
+  Serial.print(";");
 
-    // read elbow
-    tcaselect(1);
+  // read elbow
+  if (elbow_found) {
+    tcaselect(ELBOW_ADDR);
     print_sensor_data(&elbow);
-    Serial.print(";");
+  } else {
+    Serial.print("0,0,0,0,3,3,3,3");
+  }
+  Serial.print(";");
 
-    // read shoulder
-    tcaselect(0);
+  // read shoulder
+  if (shoulder_found) {
+    tcaselect(SHOULDER_ADDR);
     print_sensor_data(&shoulder);
+  } else {
+    Serial.print("0,0,0,0,3,3,3,3");
   }
 
   Serial.println();
