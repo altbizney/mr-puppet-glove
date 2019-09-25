@@ -11,6 +11,7 @@ Adafruit_BNO055 wrist = Adafruit_BNO055(55);
 Adafruit_BNO055 elbow = Adafruit_BNO055(55);
 Adafruit_BNO055 shoulder = Adafruit_BNO055(55);
 
+bool wrist_found_direct = false;
 bool wrist_found = false;
 bool elbow_found = false;
 bool shoulder_found = false;
@@ -60,6 +61,20 @@ void setup() {
   Wire.begin();
 
   Serial.begin(BAUD);
+
+  Serial.println("DEBUG: trying direct access to wrist");
+
+  if (!wrist.begin()) {
+    Serial.println("DEBUG: wrist not directly connected, skipping");
+  } else {
+    delay(1000);
+    wrist.setExtCrystalUse(true);
+    wrist_found_direct = true;
+    Serial.println("DEBUG: wrist direct access setup complete");
+
+    // BAIL EARLY ON REST OF SETUP
+    return;
+  }
 
   // scan i2c ports
   Serial.println("DEBUG:TCAScanner ready");
@@ -153,8 +168,6 @@ void setup() {
   } else {
     Serial.println("DEBUG: shoulder not found, skipping");
   }
-
-  Serial.println("DEBUG: setup complete");
 }
 
 void loop() {
@@ -163,8 +176,8 @@ void loop() {
   Serial.print(";");
 
   // read wrist
-  if (wrist_found) {
-    tcaselect(WRIST_ADDR);
+  if (wrist_found || wrist_found_direct) {
+    if (!wrist_found_direct) tcaselect(WRIST_ADDR);
     print_sensor_data(&wrist);
   } else {
     Serial.print("0,0,0,0,3,3,3,3");
