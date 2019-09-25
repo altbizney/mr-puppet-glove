@@ -123,7 +123,7 @@ void loop() {
     Serial.print("0,0,0,0,3,3,3,3;0,0,0,0,3,3,3,3;0,0,0,0,3,3,3,3");
   } else {
     // read wrist
-    tcaselect(0);
+    tcaselect(2);
     print_sensor_data(&wrist);
     Serial.print(";");
 
@@ -133,7 +133,7 @@ void loop() {
     Serial.print(";");
 
     // read shoulder
-    tcaselect(2);
+    tcaselect(0);
     print_sensor_data(&shoulder);
   }
 
