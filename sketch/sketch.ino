@@ -64,16 +64,25 @@ void setup() {
 
   // count how many devices are connected
   byte device_count = 0;
+  bool found_tca = false;
+
   for (byte i = 1; i < 120; i++)
   {
     Wire.beginTransmission (i);
     if (Wire.endTransmission () == 0)
     {
-      Serial.print ("DEBUG: Found address: ");
-      Serial.print (i, DEC);
-      Serial.print (" (0x");
-      Serial.print (i, HEX);
-      Serial.println (")");
+      Serial.print("DEBUG: Found address: ");
+      Serial.print(i, DEC);
+      Serial.print(" (0x");
+      Serial.print(i, HEX);
+
+      if (i == TCAADDR) {
+        found_tca = true;
+        Serial.print(") (**TCA MATCH**");
+      }
+
+      Serial.println(")");
+
       device_count++;
       delay (1);  // maybe unneeded?
     }
@@ -82,8 +91,8 @@ void setup() {
   Serial.print("DEBUG: Devices found: ");
   Serial.println(device_count);
 
-  if (device_count > 1) {
-    // if there's 2 or more devices, it means we have a multiplxer. start sensor scan.
+  if (found_tca) {
+    // found a TCA, start sensor scan
     Serial.print("DEBUG:Scanning for wrist on TCA Port #");
     Serial.println(WRIST_ADDR);
     tcaselect(WRIST_ADDR);
@@ -174,7 +183,7 @@ void setup() {
       Serial.println("DEBUG: shoulder not found, skipping");
     }
   } else {
-    // there were 1 (or 0) devices found. try direct access to the wrist sensor
+    // no TCA found. try direct access to the wrist sensor
     Serial.println("DEBUG: trying direct access to wrist");
 
     if (!wrist.begin()) {
