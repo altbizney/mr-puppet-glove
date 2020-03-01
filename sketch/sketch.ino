@@ -1,11 +1,14 @@
 
 #include <Wire.h>
+#include <SPI.h>
+
 extern "C" {
 #include "utility/twi.h"  // from Wire library, so we can do bus scanning
 }
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
+#include <SPI_anything.h>
 
 Adafruit_BNO055 wrist = Adafruit_BNO055(55);
 Adafruit_BNO055 elbow = Adafruit_BNO055(55);
@@ -21,6 +24,15 @@ bool shoulder_found = false;
 #define WRIST_ADDR 2
 #define ELBOW_ADDR 1
 #define SHOULDER_ADDR 0
+
+typedef struct myStruct
+{
+  byte a;
+  int b;
+  long c;
+};
+
+myStruct foo;
 
 void tcaselect(uint8_t i) {
   if (i > 7) return;
@@ -59,6 +71,12 @@ void setup() {
   delay(1000);
 
   Wire.begin();
+
+  SPI.begin();
+  SPI.setClockDivider(SPI_CLOCK_DIV8);
+
+  foo.a = 42;
+  foo.c = 100000;
 
   Serial.begin(BAUD);
 
@@ -199,7 +217,8 @@ void setup() {
 
 void loop() {
   // read hand
-  Serial.print(analogRead(A0));
+  foo.b = analogRead(A0);
+  Serial.print(foo.b);
   Serial.print(";");
 
   // read wrist
@@ -229,6 +248,12 @@ void loop() {
   }
 
   Serial.println();
+
+  digitalWrite(SS, LOW); // enable Slave Select
+  SPI_writeAnything(foo);
+  digitalWrite(SS, HIGH); // disable Slave Select
+
+  foo.c++;
 
   delay(60);
 }
